@@ -375,6 +375,44 @@
 
     <!-- DATA TABLE -->
     <div class="section-title"><span class="q-tag">Table</span> Filterable Album Browser</div>
+    <div class="filters-bar">
+      <div class="filter-group">
+        <label>Genre</label>
+        <select id="fGenre2"><option value="">All Genres</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Album Type</label>
+        <select id="fType2"><option value="">All Types</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Artist Gender</label>
+        <select id="fGender2">
+          <option value="">All</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Male/Female">Mixed</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Release Year: <span id="yearLabel2"></span></label>
+        <div class="range-row">
+          <input type="range" id="fYearMin2" min="1950" max="2020" step="1" />
+          <span>–</span>
+          <input type="range" id="fYearMax2" min="1950" max="2020" step="1" />
+        </div>
+      </div>
+      <div class="filter-group">
+        <label>2020 Rank ≤</label>
+        <select id="fRank2">
+          <option value="500">Top 500</option>
+          <option value="100">Top 100</option>
+          <option value="50">Top 50</option>
+          <option value="25">Top 25</option>
+          <option value="10">Top 10</option>
+        </select>
+      </div>
+      <button class="reset-btn" onclick="resetFilters()">↺ Reset</button>
+    </div>
     <div class="table-wrap">
       <div class="table-meta" id="tableMeta">Loading…</div>
       <table id="mainTable">
@@ -455,39 +493,69 @@ Papa.parse(CSV_URL, {
 // ── FILTER INIT ───────────────────────────────────────────────────────────────
 function initFilters() {
   const genres = [...new Set(ALL_DATA.map(d => d.genre).filter(Boolean))].sort();
-  const fG = document.getElementById('fGenre');
-  genres.forEach(g => { const o = document.createElement('option'); o.value = g; o.textContent = g; fG.appendChild(o); });
+  ['fGenre','fGenre2'].forEach(id => {
+    const el = document.getElementById(id);
+    genres.forEach(g => { const o = document.createElement('option'); o.value = g; o.textContent = g; el.appendChild(o); });
+  });
 
   const types = [...new Set(ALL_DATA.map(d => d.type).filter(Boolean))].sort();
-  const fT = document.getElementById('fType');
-  types.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; fT.appendChild(o); });
+  ['fType','fType2'].forEach(id => {
+    const el = document.getElementById(id);
+    types.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; el.appendChild(o); });
+  });
 
   const years = ALL_DATA.map(d => d.release_year).filter(Boolean);
   const minY = Math.min(...years), maxY = Math.max(...years);
-  const ymn = document.getElementById('fYearMin'), ymx = document.getElementById('fYearMax');
-  ymn.min = ymx.min = minY; ymn.max = ymx.max = maxY;
-  ymn.value = minY; ymx.value = maxY;
+
+  // Init both year range pairs
+  ['', '2'].forEach(sfx => {
+    const ymn = document.getElementById('fYearMin'+sfx);
+    const ymx = document.getElementById('fYearMax'+sfx);
+    ymn.min = ymx.min = minY; ymn.max = ymx.max = maxY;
+    ymn.value = minY; ymx.value = maxY;
+    ymn.addEventListener('input', () => { if (+ymn.value > +ymx.value) ymx.value = ymn.value; syncBars(); applyFilters(); });
+    ymx.addEventListener('input', () => { if (+ymx.value < +ymn.value) ymn.value = ymx.value; syncBars(); applyFilters(); });
+  });
   updateYearLabel();
 
-  ymn.addEventListener('input', () => { if (+ymn.value > +ymx.value) ymx.value = ymn.value; updateYearLabel(); applyFilters(); });
-  ymx.addEventListener('input', () => { if (+ymx.value < +ymn.value) ymn.value = ymx.value; updateYearLabel(); applyFilters(); });
+  ['fGenre','fType','fGender','fRank'].forEach(id => {
+    document.getElementById(id).addEventListener('change', () => { syncBars(); applyFilters(); });
+  });
+  ['fGenre2','fType2','fGender2','fRank2'].forEach(id => {
+    document.getElementById(id).addEventListener('change', () => { syncBars(true); applyFilters(); });
+  });
+}
 
-  ['fGenre','fType','fGender','fRank'].forEach(id => document.getElementById(id).addEventListener('change', applyFilters));
+// Keep both filter bars in sync. source2=true means the bottom bar was changed.
+function syncBars(source2 = false) {
+  const ids = ['fGenre','fType','fGender','fRank'];
+  if (source2) {
+    ids.forEach(id => document.getElementById(id).value = document.getElementById(id+'2').value);
+    document.getElementById('fYearMin').value = document.getElementById('fYearMin2').value;
+    document.getElementById('fYearMax').value = document.getElementById('fYearMax2').value;
+  } else {
+    ids.forEach(id => document.getElementById(id+'2').value = document.getElementById(id).value);
+    document.getElementById('fYearMin2').value = document.getElementById('fYearMin').value;
+    document.getElementById('fYearMax2').value = document.getElementById('fYearMax').value;
+  }
+  updateYearLabel();
 }
 
 function updateYearLabel() {
-  document.getElementById('yearLabel').textContent =
-    `${document.getElementById('fYearMin').value} – ${document.getElementById('fYearMax').value}`;
+  const val = `${document.getElementById('fYearMin').value} – ${document.getElementById('fYearMax').value}`;
+  document.getElementById('yearLabel').textContent = val;
+  document.getElementById('yearLabel2').textContent = val;
 }
 
 function resetFilters() {
-  document.getElementById('fGenre').value = '';
-  document.getElementById('fType').value = '';
-  document.getElementById('fGender').value = '';
-  document.getElementById('fRank').value = '500';
+  ['fGenre','fGenre2'].forEach(id => document.getElementById(id).value = '');
+  ['fType','fType2'].forEach(id => document.getElementById(id).value = '');
+  ['fGender','fGender2'].forEach(id => document.getElementById(id).value = '');
+  ['fRank','fRank2'].forEach(id => document.getElementById(id).value = '500');
   const years = ALL_DATA.map(d => d.release_year).filter(Boolean);
-  document.getElementById('fYearMin').value = Math.min(...years);
-  document.getElementById('fYearMax').value = Math.max(...years);
+  const minY = Math.min(...years), maxY = Math.max(...years);
+  ['fYearMin','fYearMin2'].forEach(id => document.getElementById(id).value = minY);
+  ['fYearMax','fYearMax2'].forEach(id => document.getElementById(id).value = maxY);
   updateYearLabel();
   applyFilters();
 }
