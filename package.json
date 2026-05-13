@@ -1,0 +1,13 @@
+{
+  "name": "500albums",
+  "version": "0.1.0",
+  "description": "Interactive GitHub Pages for the 500 albums dataset",
+  "scripts": {
+    "dev": "npx serve docs -l 8080",
+    "build": "python scripts/build.py",
+    "deploy": "python scripts/build.py && git add docs/ && git commit -m 'chore: rebuild site' && git push"
+  },
+  "devDependencies": {
+    "serve": "^14.0.0"
+  }
+}
