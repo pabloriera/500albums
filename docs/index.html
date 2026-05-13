@@ -742,7 +742,7 @@ function drawDecade() {
     ...PLOTLY_LAYOUT_BASE,
     margin:{t:10,r:20,b:60,l:50},
     xaxis:{...PLOTLY_LAYOUT_BASE.xaxis, title:'Decade'},
-    yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:'Albums'},
+    yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:'Albums', type:'linear', tickmode:'linear', tick0:0, dtick:50},
   }, PLOTLY_CONFIG);
 }
 
@@ -762,7 +762,7 @@ function drawDecadeRank() {
   Plotly.react('chartDecadeRank', traces, {
     ...PLOTLY_LAYOUT_BASE,
     margin:{t:10,r:20,b:60,l:60},
-    yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:'2020 Rank (lower = better)', autorange:'reversed', tickmode:'linear', tick0:0, dtick:100},
+    yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:'2020 Rank (lower = better)', type:'linear', autorange:'reversed', tickmode:'linear', tick0:0, dtick:100},
     showlegend: false,
   }, PLOTLY_CONFIG);
 }
@@ -783,7 +783,7 @@ function drawBillboard() {
   }], {
     ...PLOTLY_LAYOUT_BASE,
     margin:{t:10,r:60,b:40,l:190},
-    xaxis:{...PLOTLY_LAYOUT_BASE.xaxis, title:'Weeks on Billboard'},
+    xaxis:{...PLOTLY_LAYOUT_BASE.xaxis, title:'Weeks on Billboard', type:'linear', tickmode:'linear', tick0:0, dtick:50},
   }, PLOTLY_CONFIG);
 }
 
@@ -833,7 +833,7 @@ function drawSpotifyByGenre() {
     ...PLOTLY_LAYOUT_BASE,
     margin:{t:20,r:20,b:120,l:50},
     xaxis:{...PLOTLY_LAYOUT_BASE.xaxis, tickangle:-40},
-    yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:'Avg Spotify Popularity', range:[0,100]},
+    yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:'Avg Spotify Popularity', autorange:false, range:[0,100]},
   }, PLOTLY_CONFIG);
 }
 
@@ -863,8 +863,7 @@ function drawGenderGenre() {
     ...PLOTLY_LAYOUT_BASE,
     barmode: 'stack',
     margin:{t:10,r:10,b:120,l:50},
-    xaxis:{...PLOTLY_LAYOUT_BASE.xaxis, tickangle:-40},
-    yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:'Albums'},
+    yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:'Albums', type:'linear', tickmode:'linear', tick0:0, dtick:50},
   }, PLOTLY_CONFIG);
 }
 
@@ -977,8 +976,8 @@ function drawYearVsRank() {
   Plotly.react('chartYearVsRank', traces, {
     ...PLOTLY_LAYOUT_BASE,
     margin:{t:10,r:10,b:60,l:60},
-    xaxis:{...PLOTLY_LAYOUT_BASE.xaxis, title:'Release Year', tickmode:'linear', dtick:5},
-    yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:'2020 Rank (lower = better)', autorange:'reversed', tickmode:'linear', tick0:0, dtick:100},
+    xaxis:{...PLOTLY_LAYOUT_BASE.xaxis, title:'Release Year', type:'linear', tickmode:'linear', tick0:1955, dtick:5},
+    yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:'2020 Rank (lower = better)', type:'linear', autorange:'reversed', tickmode:'linear', tick0:0, dtick:100},
     showlegend: true,
     legend:{bgcolor:'transparent',orientation:'h',x:.5,xanchor:'center',y:-0.18,font:{size:10}},
   }, PLOTLY_CONFIG);
