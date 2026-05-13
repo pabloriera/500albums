@@ -315,7 +315,7 @@
       </div>
       <div class="chart-card">
         <h3><strong>Q2 · Which album climbed the most across the 2003→2012→2020 updates?</strong></h3>
-        <div id="chartBiggestClimbers" style="height:360px"></div>
+        <div id="chartBiggestClimbers" style="height:460px"></div>
       </div>
       <div class="chart-card">
         <h3><strong>Q3 · What decade produced the most Top-500 albums?</strong></h3>
@@ -352,7 +352,7 @@
       </div>
       <div class="chart-card">
         <h3><strong>Q10 · Which artists fell furthest in the 2020 rankings vs 2003?</strong></h3>
-        <div id="chartBiggestDrops" style="height:360px"></div>
+        <div id="chartBiggestDrops" style="height:460px"></div>
       </div>
     </div>
 
@@ -365,7 +365,7 @@
       </div>
       <div class="chart-card">
         <h3><strong>Q12 · Which albums are exclusive to the 2020 edition (new entries)?</strong></h3>
-        <div id="chartNewEntries" style="height:380px"></div>
+        <div id="chartNewEntries" style="height:520px"></div>
       </div>
       <div class="chart-card" style="grid-column: 1 / -1">
         <h3><strong>Q13 · How does release year relate to 2020 rank? (each dot = one album)</strong></h3>
@@ -703,19 +703,21 @@ function drawBiggestClimbers() {
     return { ...d, improvement };
   });
   const top = withImprovement.sort((a,b)=>b.improvement-a.improvement).slice(0,15);
-  const labels = top.map(d => `${d.clean_name}<br><i style="font-size:.85em">${d.album}</i>`);
+  const labels = top.map(d => `${d.clean_name} – ${d.album}`);
   Plotly.react('chartBiggestClimbers', [{
     type: 'bar', orientation: 'h',
     x: top.map(d=>d.improvement).reverse(),
     y: labels.reverse(),
     marker: { color: '#2ec4b6' },
-    text: top.map(d=>`${d.rank_2003||d.rank_2012} → ${d.rank_2020}`).reverse(),
-    textposition: 'outside',
-    hovertemplate: '<b>%{y}</b><br>Improvement: +%{x} positions<extra></extra>',
+    text: top.map(d=>`#${d.rank_2003||d.rank_2012} → #${d.rank_2020}`).reverse(),
+    textposition: 'inside',
+    insidetextanchor: 'start',
+    hovertemplate: '<b>%{y}</b><br>Climbed +%{x} positions<extra></extra>',
   }], {
     ...PLOTLY_LAYOUT_BASE,
-    margin:{t:10,r:80,b:40,l:190},
-    xaxis:{...PLOTLY_LAYOUT_BASE.xaxis, title:'Positions climbed (+)'},
+    margin:{t:10,r:20,b:50,l:280},
+    xaxis:{...PLOTLY_LAYOUT_BASE.xaxis, title:'Positions climbed', type:'linear', tickmode:'linear', tick0:0, dtick:50},
+    uniformtext:{mode:'hide', minsize:9},
   }, PLOTLY_CONFIG);
 }
 
@@ -833,7 +835,7 @@ function drawSpotifyByGenre() {
     ...PLOTLY_LAYOUT_BASE,
     margin:{t:20,r:20,b:120,l:50},
     xaxis:{...PLOTLY_LAYOUT_BASE.xaxis, tickangle:-40},
-    yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:'Avg Spotify Popularity', autorange:false, range:[0,100]},
+    yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:'Avg Spotify Popularity', type:'linear', rangemode:'tozero', tickmode:'linear', tick0:0, dtick:10},
   }, PLOTLY_CONFIG);
 }
 
@@ -899,13 +901,15 @@ function drawBiggestDrops() {
     x: withDrop.map(d=>d.drop).reverse(),
     y: labels.reverse(),
     marker: { color: '#e63946' },
-    text: withDrop.map(d=>`${d.rank_2003} → ${d.rank_2020}`).reverse(),
-    textposition: 'outside',
+    text: withDrop.map(d=>`#${d.rank_2003} → #${d.rank_2020}`).reverse(),
+    textposition: 'inside',
+    insidetextanchor: 'start',
     hovertemplate: '<b>%{y}</b><br>Dropped %{x} places<extra></extra>',
   }], {
     ...PLOTLY_LAYOUT_BASE,
-    margin:{t:10,r:80,b:40,l:220},
-    xaxis:{...PLOTLY_LAYOUT_BASE.xaxis, title:'Positions dropped'},
+    margin:{t:10,r:20,b:50,l:280},
+    xaxis:{...PLOTLY_LAYOUT_BASE.xaxis, title:'Positions dropped', type:'linear', tickmode:'linear', tick0:0, dtick:50},
+    uniformtext:{mode:'hide', minsize:9},
   }, PLOTLY_CONFIG);
 }
 
@@ -941,19 +945,22 @@ function drawNewEntries() {
     .filter(d => d.rank_2020 && !d.rank_2003 && !d.rank_2012)
     .sort((a,b)=>a.rank_2020-b.rank_2020)
     .slice(0,20);
+  const labels = newEntries.map(d=>`${d.clean_name} – ${d.album}`);
   Plotly.react('chartNewEntries', [{
     type: 'bar',
     x: newEntries.map(d=>d.rank_2020),
-    y: newEntries.map(d=>`${d.clean_name}<br>${d.album}`),
+    y: labels,
     orientation: 'h',
-    marker: { color: '#2ec4b6' },
-    text: newEntries.map(d=>d.rank_2020),
-    textposition: 'outside',
-    hovertemplate: '<b>%{y}</b><br>Rank: #%{x}<extra></extra>',
+    marker: { color: '#9b5de5' },
+    text: newEntries.map(d=>`#${d.rank_2020}`),
+    textposition: 'inside',
+    insidetextanchor: 'start',
+    hovertemplate: '<b>%{y}</b><br>2020 Rank: #%{x}<extra></extra>',
   }], {
     ...PLOTLY_LAYOUT_BASE,
-    margin:{t:10,r:60,b:40,l:180},
-    xaxis:{...PLOTLY_LAYOUT_BASE.xaxis, title:'2020 Rank', autorange:'reversed'},
+    margin:{t:10,r:20,b:50,l:280},
+    xaxis:{...PLOTLY_LAYOUT_BASE.xaxis, title:'2020 Rank (lower = better)', type:'linear', autorange:'reversed', tickmode:'linear', tick0:0, dtick:50},
+    uniformtext:{mode:'hide', minsize:9},
   }, PLOTLY_CONFIG);
 }
 
