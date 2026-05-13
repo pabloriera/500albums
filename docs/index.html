@@ -762,7 +762,7 @@ function drawDecadeRank() {
   Plotly.react('chartDecadeRank', traces, {
     ...PLOTLY_LAYOUT_BASE,
     margin:{t:10,r:20,b:60,l:60},
-    yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:'2020 Rank (lower = better)', autorange:'reversed'},
+    yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:'2020 Rank (lower = better)', autorange:'reversed', tickmode:'linear', tick0:0, dtick:100},
     showlegend: false,
   }, PLOTLY_CONFIG);
 }
