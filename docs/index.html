@@ -454,14 +454,15 @@ const PLOTLY_LAYOUT_BASE = {
   plot_bgcolor: 'transparent',
   font: { color: '#e8e8f0', family: 'Segoe UI, system-ui, sans-serif', size: 11 },
   margin: { t: 10, r: 10, b: 60, l: 50 },
-  xaxis: { gridcolor: '#2e2e40', zerolinecolor: '#2e2e40' },
-  yaxis: { gridcolor: '#2e2e40', zerolinecolor: '#2e2e40' },
+  xaxis: { gridcolor: '#2e2e40', zerolinecolor: '#2e2e40', fixedrange: true },
+  yaxis: { gridcolor: '#2e2e40', zerolinecolor: '#2e2e40', fixedrange: true },
   colorway: ['#e63946','#f4a261','#2ec4b6','#a8dadc','#457b9d','#6a4c93','#ff9f1c','#cbf3f0'],
   hoverlabel: { bgcolor: '#22222f', bordercolor: '#2e2e40', font: { color: '#e8e8f0' } },
   legend: { bgcolor: 'transparent', bordercolor: 'transparent' },
   autosize: true,
+  dragmode: false,
 };
-const PLOTLY_CONFIG = { responsive: true, displayModeBar: false };
+const PLOTLY_CONFIG = { responsive: true, displayModeBar: false, scrollZoom: false };
 
 // ── DATA LOAD ─────────────────────────────────────────────────────────────────
 Papa.parse(CSV_URL, {
@@ -933,9 +934,10 @@ function drawSpotifyVsBillboard() {
   Plotly.react('chartSpotifyVsBillboard', traces, {
     ...PLOTLY_LAYOUT_BASE,
     margin:{t:10,r:10,b:60,l:60},
-    xaxis:{...PLOTLY_LAYOUT_BASE.xaxis, title:'Weeks on Billboard'},
-    yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:'Spotify Popularity'},
+    xaxis:{...PLOTLY_LAYOUT_BASE.xaxis, title:'Weeks on Billboard', type:'linear', rangemode:'tozero', tickmode:'linear', tick0:0, dtick:100},
+    yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, title:'Spotify Popularity', type:'linear', rangemode:'tozero', tickmode:'linear', tick0:0, dtick:10},
     showlegend: true,
+    legend:{bgcolor:'transparent', orientation:'h', x:.5, xanchor:'center', y:-0.18, font:{size:10}},
   }, PLOTLY_CONFIG);
 }
 
